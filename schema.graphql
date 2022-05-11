@@ -11,8 +11,10 @@ type Link {
 type Mutation {
   addLink(description: String!, url: String!): Link!
   deleteLink(id: ID!): Link!
+  updateLink(description: String, id: ID!, url: String): Link!
 }
 
 type Query {
   feed: [Link!]!
+  findLinkById(id: ID!): Link!
 }

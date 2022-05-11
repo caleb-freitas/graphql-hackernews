@@ -48,7 +48,7 @@ export const AddLink = extendType({
       resolve(parent, args, context) {
         const { description, url } = args
         let idCounter = links.length + 1
-        const link = {
+        const link: NexusGenObjects["Link"] = {
           id: idCounter,
           description: description,
           url: url
@@ -76,6 +76,48 @@ export const DeleteLink = extendType({
         const link = links[index]
         links.splice(index, 1)
         return link
+      }
+    })
+  }
+})
+
+export const UpdateLink = extendType({
+  type: "Mutation",
+  definition(t) {
+    t.nonNull.field("updateLink", {
+      type: "Link",
+      args: {
+        id: nonNull(idArg()),
+        url: stringArg(),
+        description: stringArg()
+      },
+      resolve(parent, args, context) {
+        const { id, description, url } = args
+        const index = links.map(link => {
+          return link.id
+        }).indexOf(parseInt(id))
+        links[index].description = description as string
+        links[index].url = url as string
+        return links[index]
+      }
+    })
+  }
+})
+
+export const FindLinkById = extendType({
+  type: "Query",
+  definition(t) {
+    t.nonNull.field("findLinkById", {
+      type: "Link",
+      args: {
+        id: nonNull(idArg())
+      },
+      resolve(parent, args, context) {
+        const { id } = args
+        const index = links.map(link => {
+          return link.id
+        }).indexOf(parseInt(id))
+        return links[index]
       }
     })
   }
