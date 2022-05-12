@@ -178,6 +178,11 @@ export interface NexusGenArgTypes {
       linkId: number; // Int!
     }
   }
+  Query: {
+    loadLinks: { // args
+      filter?: string | null; // String
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
