@@ -2,6 +2,11 @@
 ### Do not make changes to this file directly
 
 
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
 type Link {
   description: String!
   id: Int!
@@ -12,6 +17,8 @@ type Link {
 type Mutation {
   addLink(description: String!, url: String!): Link!
   deleteLink(id: ID!): Link!
+  login(email: String!, password: String!): AuthPayload!
+  signup(email: String!, name: String!, password: String!): AuthPayload!
   updateLink(description: String, id: ID!, url: String): Link!
 }
 
