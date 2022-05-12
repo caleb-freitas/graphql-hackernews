@@ -9,7 +9,11 @@ export const schema = makeSchema({
 		schema: join(process.cwd(), "schema.graphql"),
 		// nexus-typegen.ts::contain typescript type definitions for all types in graphql schema
 		typegen: join(process.cwd(), "nexus-typegen.ts")
+	},
+	contextType: {
+		// path to the context module
+		module: join(process.cwd(), "./src/context.ts"),
+		// name of the exported interface in that module
+		export: "Context"
 	}
 })
-
-console.log(process.cwd())

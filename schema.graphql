@@ -15,6 +15,5 @@ type Mutation {
 }
 
 type Query {
-  feed: [Link!]!
-  findLinkById(id: ID!): Link!
+  loadLinks: [Link!]!
 }

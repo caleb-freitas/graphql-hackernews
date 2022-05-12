@@ -1,7 +1,5 @@
-import { extendType, idArg, intArg, nonNull, objectType, stringArg } from "nexus"
-import { NexusGenObjects } from "../../nexus-typegen"
+import { extendType, idArg, nonNull, objectType, stringArg } from "nexus"
 
-// create a new type in graphql schema
 export const Link = objectType({
   name: "Link",
   definition(t) {
@@ -11,26 +9,13 @@ export const Link = objectType({
   }
 })
 
-const links: NexusGenObjects["Link"][] = [
-  {
-    id: 1,
-    url: "www.howtographql.com",
-    description: "Fullstack tutorial for GraphQL",
-  },
-  {
-    id: 2,
-    url: "graphql.org",
-    description: "GraphQL official website",
-  },
-]
-
 export const LinkQuery = extendType({
   type: "Query",
   definition(t) {
-    t.nonNull.list.nonNull.field("feed", {
+    t.nonNull.list.nonNull.field("loadLinks", {
       type: "Link",
       resolve(parent, args, context, info) {
-        return links
+        return context.prisma.link.findMany()
       }
     })
   }
@@ -45,16 +30,12 @@ export const AddLink = extendType({
         description: nonNull(stringArg()),
         url: nonNull(stringArg())
       },
-      resolve(parent, args, context) {
-        const { description, url } = args
-        let idCounter = links.length + 1
-        const link: NexusGenObjects["Link"] = {
-          id: idCounter,
-          description: description,
-          url: url
-        }
-        links.push(link)
-        return link
+      resolve(parent, args, context, info) {
+        return context.prisma.link.create({
+          data: {
+            ...args
+          }
+        })
       }
     })
   }
@@ -68,14 +49,13 @@ export const DeleteLink = extendType({
       args: {
         id: nonNull(idArg())
       },
-      resolve(parent, args, context) {
-        const { id } = args
-        const index = links.map(link => {
-          return link.id
-        }).indexOf(parseInt(id))
-        const link = links[index]
-        links.splice(index, 1)
-        return link
+      resolve(parent, args, context, info) {
+        const id = parseInt(args.id)
+        return context.prisma.link.delete({
+          where: {
+            id
+          }
+        })
       }
     })
   }
@@ -91,33 +71,19 @@ export const UpdateLink = extendType({
         url: stringArg(),
         description: stringArg()
       },
-      resolve(parent, args, context) {
-        const { id, description, url } = args
-        const index = links.map(link => {
-          return link.id
-        }).indexOf(parseInt(id))
-        links[index].description = description as string
-        links[index].url = url as string
-        return links[index]
-      }
-    })
-  }
-})
-
-export const FindLinkById = extendType({
-  type: "Query",
-  definition(t) {
-    t.nonNull.field("findLinkById", {
-      type: "Link",
-      args: {
-        id: nonNull(idArg())
-      },
-      resolve(parent, args, context) {
-        const { id } = args
-        const index = links.map(link => {
-          return link.id
-        }).indexOf(parseInt(id))
-        return links[index]
+      resolve(parent, args, context, info) {
+        const id = parseInt(args.id)
+        const description = args.description as string
+        const url = args.url as string
+        return context.prisma.link.update({
+          where: {
+            id
+          },
+          data: {
+            description,
+            url
+          }
+        })
       }
     })
   }
