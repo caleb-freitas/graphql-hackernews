@@ -43,11 +43,21 @@ export const AddLink = extendType({
         url: nonNull(stringArg())
       },
       resolve(parent, args, context, info) {
-        return context.prisma.link.create({
+        const { userId } = context
+        if (!userId) {
+          throw new Error("Cannot add a link without logging in")
+        }
+        const newLink = context.prisma.link.create({
           data: {
-            ...args
+            ...args,
+            postedBy: {
+              connect: {
+                id: userId
+              }
+            }
           }
         })
+        return newLink
       }
     })
   }
@@ -62,6 +72,10 @@ export const DeleteLink = extendType({
         id: nonNull(idArg())
       },
       resolve(parent, args, context, info) {
+        const { userId } = context
+        if (!userId) {
+          throw new Error("Cannot delete a link without logging in")
+        }
         const id = parseInt(args.id)
         return context.prisma.link.delete({
           where: {
@@ -84,6 +98,10 @@ export const UpdateLink = extendType({
         description: stringArg()
       },
       resolve(parent, args, context, info) {
+        const { userId } = context
+        if (!userId) {
+          throw new Error("Cannot update a link without logging in")
+        }
         const id = parseInt(args.id)
         const description = args.description as string
         const url = args.url as string
