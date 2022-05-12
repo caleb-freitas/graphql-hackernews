@@ -31,7 +31,7 @@ type Mutation {
 }
 
 type Query {
-  loadLinks(filter: String): [Link!]!
+  loadLinks(filter: String, skip: Int, take: Int): [Link!]!
 }
 
 type User {

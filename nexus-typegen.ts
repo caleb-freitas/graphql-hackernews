@@ -181,6 +181,8 @@ export interface NexusGenArgTypes {
   Query: {
     loadLinks: { // args
       filter?: string | null; // String
+      skip?: number | null; // Int
+      take?: number | null; // Int
     }
   }
 }
